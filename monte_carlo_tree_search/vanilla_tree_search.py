@@ -17,7 +17,7 @@ import hashlib
 import json
 from collections import defaultdict
 
-granularity = 200
+granularity = 40
 
 parameters_range = {
     "p1":np.linspace(start=0, stop=1, num=granularity, dtype=float),
@@ -84,13 +84,9 @@ class MCTS:
 
     def iterate(self, iterations=10000):
         for i in range(iterations):
-            # We sometimes print the results
-            #if i % 1000 == 0:
-            #    self.rollout(self.start_state, print_results=True)
-            #else:
             self.rollout(self.start_state)
 
-    def rollout(self, node, print_results=False):
+    def rollout(self, node, return_results=False):
         # Train for one iteration
         path = []
         while not node.is_terminal():
@@ -110,11 +106,12 @@ class MCTS:
         # We get the reward of the terminal node
         reward = node.get_reward()
         self.hash_reward_table[node.__hash__()] = reward
-        if print_results:
-            print(reward)
         
         # We backpropagate the reward
         self.backprop(path, reward)
+
+        if return_results:
+            return reward, node.node_state
         
     def uct(self, parent_node, child_node):
         return self.Q[child_node.__hash__()]/self.N[child_node.__hash__()] + np.sqrt(2*np.log(self.N[parent_node.__hash__()])/self.N[child_node.__hash__()])

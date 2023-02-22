@@ -17,7 +17,7 @@ import hashlib
 import json
 from collections import defaultdict
 
-granularity = 40
+granularity = 200
 
 parameters_range = {
     "p1":np.linspace(start=0, stop=1, num=granularity, dtype=float),
